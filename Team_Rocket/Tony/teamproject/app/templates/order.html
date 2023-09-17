@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Order</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Order creation form goes here -->
+        <form id="order-form" action="/order" method="POST">
+            <!-- Form fields for order -->
+            <label for="customer_id">Customer ID:</label>
+            <input type="text" id="customer_id" name="customer_id" required>
+
+            <!-- You can add more form fields for order details here -->
+
+            <button type="submit">Create Order</button>
+        </form>
+    </main>
+
+    <footer>
+        &copy; 2023 Online Order System
+    </footer>
+
+    <!-- Include the JavaScript file for order form handling -->
+    <script src="{{ url_for('static', filename='order.js') }}"></script>
+</body>
+</html>
+

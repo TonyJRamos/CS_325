@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Registration</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>User Registration</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Registration form goes here -->
+        <form id="registration-form" action="/register" method="POST">
+            <!-- Form fields for registration -->
+            <!-- Include the form fields here (e.g., username, password, etc.) -->
+        </form>
+    </main>
+
+    <footer>
+        &copy; 2023 Online Order System
+    </footer>
+
+    <!-- Include the JavaScript file for registration form handling -->
+    <script src="{{ url_for('static', filename='registration.js') }}"></script>
+</body>
+</html>
+

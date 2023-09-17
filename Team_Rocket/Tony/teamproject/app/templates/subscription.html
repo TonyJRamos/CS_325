@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subscription Management</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Subscription Management</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Subscription management form goes here -->
+        <form id="subscription-form" action="/subscriptions" method="POST">
+            <!-- Form fields for subscription management -->
+            <label for="sku">Product SKU:</label>
+            <input type="text" id="sku" name="sku" required>
+
+            <label for="frequency">Frequency (months):</label>
+            <input type="number" id="frequency" name="frequency" required>
+
+            <button type="submit">Create Subscription</button>
+        </form>
+    </main>
+
+    <footer>
+        &copy; 2023 Online Order System
+    </footer>
+
+    <!-- Include the JavaScript file for subscription form handling -->
+    <script src="{{ url_for('static', filename='subscription.js') }}"></script>
+</body>
+</html>
+

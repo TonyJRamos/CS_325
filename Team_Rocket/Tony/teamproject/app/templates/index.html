@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Order System</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+     <!-- Logo Container -->
+     <div class="logo-container">
+        <img src="https://storage.googleapis.com/projstorage/ImageCache/Logo2_Trans.png" alt="Company Logo">
+    </div>
+ 
+    <header>
+        <h1>Welcome to 'Team Rockets' Online Ordering System</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('registration') }}">Register</a></li>
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('get_catalog') }}">Browse Catalog</a></li>
+            <!-- Add more navigation links as needed -->
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>Experience Easy Ordering</h2>
+            <p>Discover a world of products at your fingertips. Register and dive in now!</p>
+            <a href="{{ url_for('registration') }}" class="button">Get Started</a>
+        </section>
+
+        <section class="info">
+            <h2>Why Choose Our System?</h2>
+            <p>With a vast catalog of live subservient Pokemon's, easy order management, and reliable delivery, we stand out as your best choice for battle plans and shopping.</p>
+        </section>
+
+        <section class="cta">
+            <h2>Join the Revolution</h2>
+            <p>Don't miss out. Be a part of the future of online shopping!</p>
+            <a href="{{ url_for('registration') }}" class="button">Join Now</a>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2023 Online Order System
+    </footer>
+</body>
+</html>
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catalog</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Catalog</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Catalog content goes here -->
+        <div id="catalog-container">
+            {% for product in products %}
+            <div class="product-item">
+                <div class="product-info">
+                    <h2>{{ product.itemName }}</h2>
+                    <p>{{ product.itemDescription }}</p>
+                    <p><strong>Price:</strong> ${{ product.price }}</p>
+                    <p><strong>Available Quantity:</strong> {{ product.availableQuantity }}</p>
+                </div>
+                <div class="product-image">
+                    <img src="{{ product.imageUrl }}" alt="{{ product.itemName }}" style="max-width: 150px;">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2023 Online Order System
+    </footer>
+
+</body>
+</html>
+
+
