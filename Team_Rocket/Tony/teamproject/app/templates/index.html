@@ -6,23 +6,24 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-     <!-- Logo Container -->
-     <div class="logo-container">
+    <!-- Logo Container -->
+    <div class="logo-container">
         <img src="https://storage.googleapis.com/projstorage/ImageCache/Logo2_Trans.png" alt="Company Logo">
     </div>
- 
-    <header>
-        <h1>Welcome to 'Team Rockets' Online Ordering System</h1>
-    </header>
 
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('registration') }}">Register</a></li>
-            <li><a href="{{ url_for('login') }}">Login</a></li>
-            <li><a href="{{ url_for('get_catalog') }}">Browse Catalog</a></li>
-            <!-- Add more navigation links as needed -->
-        </ul>
-    </nav>
+    <div class="header-container">
+        <header>
+            <h1>Welcome to 'Team Rockets' Online Ordering System</h1>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('registration') }}">Register</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('get_catalog') }}">Browse Catalog</a></li>
+                <!-- Add more navigation links as needed -->
+            </ul>
+        </nav>
 
     <main>
         <section class="hero">
@@ -48,4 +49,5 @@
     </footer>
 </body>
 </html>
+
 

@@ -1,27 +1,43 @@
-// JavaScript for order creation form
+// Fetch catalog and populate the items
 const orderForm = document.getElementById('order-form');
 
 orderForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const formData = new FormData(orderForm);
+    const data = {};
+
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
 
     try {
-        const response = await fetch('/order', {
+        const response = await fetch('/submit_order', {  // Updated URL here
             method: 'POST',
-            body: formData,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         });
 
-        if (response.ok) {
-            // Order creation successful, show a success message or redirect
-            console.log('Order created successfully.');
-            // You can add code here to handle success, e.g., redirect to the order details page
+        if (response.headers.get('Content-Type').includes('application/json')) {
+            const responseData = await response.json();
+            if (response.ok) {
+                console.log('Order created successfully.', responseData.message);
+                alert(responseData.message);
+            } else {
+                console.error('Failed to create the order:', responseData.message);
+                alert('Failed to create the order: ' + responseData.message);
+            }
         } else {
-            // Order creation failed, display an error message
-            console.error('Failed to create the order:', response.status);
-            // You can add code here to display an error message to the user
+            console.error('Expected JSON, but received:', await response.text());
+            alert('There was an error processing your order.');
         }
     } catch (error) {
         console.error('An error occurred:', error);
+        alert('There was an error processing your order.');
     }
 });
+
+
+

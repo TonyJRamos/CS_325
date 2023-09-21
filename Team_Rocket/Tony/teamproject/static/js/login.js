@@ -13,7 +13,7 @@ loginForm.addEventListener('submit', async (event) => {
         });
 
         if (response.ok) {
-            // Login successful, show a success message or redirect to another page
+            // Login successful, redirect to the dashboard
             window.location.href = '/dashboard'; // Redirect to the dashboard page after successful login
         } else {
             // Login failed, display an error message

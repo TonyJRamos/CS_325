@@ -17,14 +17,49 @@
     </nav>
 
     <main>
-        <!-- Customer profile form goes here -->
-        <form action="/profile" method="POST">
-            <!-- Form fields for customer profile -->
+        <form action="{{ url_for('customer_profile') }}" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required value="{{ customer.name if customer else '' }}">
+    
+            <label for="creditCard">Credit Card:</label>
+            <input type="text" id="creditCard" name="creditCard" required value="{{ customer.creditCard if customer else '' }}">
+    
+            <input type="submit" value="Update Profile">
         </form>
     </main>
+
+    <script>
+        function fetchUserProfile(userId) {
+            fetch(`/get_profile/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                    alert('Error fetching profile.');
+                    return;
+                }
+                // Assuming you have HTML elements with these IDs
+                document.getElementById('username').textContent = data.username;
+                document.getElementById('email').textContent = data.email;
+                // Add other fields as needed
+            })
+            .catch(error => {
+                console.error("There was an error fetching the profile data.", error);
+            });
+        }
+
+        // Call this function when the button is clicked
+        // Replace 'buttonId' with your button's actual ID
+        document.getElementById('buttonId').addEventListener('click', function() {
+            const userId = YOUR_LOGGED_IN_USER_ID;  // Replace with the way you store/fetch user ID
+            fetchUserProfile(userId);
+        });
+    </script>
 
     <footer>
         &copy; 2023 Online Order System
     </footer>
 </body>
 </html>
+
+

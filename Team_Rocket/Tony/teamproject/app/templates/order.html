@@ -13,19 +13,42 @@
     <nav>
         <ul>
             <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
         </ul>
     </nav>
 
     <main>
-        <!-- Order creation form goes here -->
-        <form id="order-form" action="/order" method="POST">
-            <!-- Form fields for order -->
-            <label for="customer_id">Customer ID:</label>
-            <input type="text" id="customer_id" name="customer_id" required>
+        <form id="order-form">
+            <div id="catalog-container">
+                {% for product in products %}
+                <div class="product-item">
+                    <div class="product-info">
+                        <h2>{{ product.itemName }}</h2>
+                        <p>{{ product.itemDescription }}</p>
+                        <p><strong>Price:</strong> ${{ product.price }}</p>
+                        <p><strong>Available Quantity:</strong> {{ product.availableQuantity }}</p>
+                        <input type="checkbox" name="selected_products" value="{{ product.SKU }}"> Order this item
+                        <label for="quantity-{{ product.SKU }}">Quantity:</label>
+                        <input type="number" name="quantity-{{ product.SKU }}" id="quantity-{{ product.SKU }}" min="1" value="1" style="width: 50px;">
+                    </div>
+                    <div class="product-image">
+                        <img src="{{ product.imageUrl }}" alt="{{ product.itemName }}" style="max-width: 150px;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
 
-            <!-- You can add more form fields for order details here -->
+            <label for="shipping_address">Shipping Address:</label>
+            <div>
+                <input type="text" name="addressLine1" placeholder="Address Line 1" required>
+                <input type="text" name="addressLine2" placeholder="Address Line 2 (optional)">
+                <input type="text" name="city" placeholder="City" required>
+                <input type="text" name="state" placeholder="State" required>
+                <input type="text" name="zipCode" placeholder="Zip Code" required>
+                <input type="text" name="country" placeholder="Country" required>
+            </div>
 
-            <button type="submit">Create Order</button>
+            <button type="submit">Place Order</button>
         </form>
     </main>
 
@@ -34,7 +57,9 @@
     </footer>
 
     <!-- Include the JavaScript file for order form handling -->
-    <script src="{{ url_for('static', filename='order.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/order.js') }}"></script>
 </body>
 </html>
+
+
 

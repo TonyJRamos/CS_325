@@ -46,14 +46,11 @@ main {
     padding: 20px;
 }
 
-/* Style the footer */
 footer {
     background-color: #007bff;
     color: #fff;
     text-align: center;
     padding: 10px 0;
-    position: absolute;
-    bottom: 0;
     width: 100%;
 }
 
@@ -165,13 +162,57 @@ header a {
     background-color: #0056b3;
 }
 
+/* Updated logo container styles */
 .logo-container {
     position: absolute;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
+    left: 0; /* Change to 0 to move it to the top left */
+    padding: 10px; /* Add padding for spacing */
     z-index: 1000; /* This ensures the logo stays above other elements */
+}
+
+/* Adjust the max-width and height of the logo */
+.logo-container img {
+    max-width: 40%; /* Adjust the size as needed */
+    height: auto;
+    position: relative;
+}
+
+/* Style the header and navigation container */
+.header-container {
+    position: relative; /* Relative positioning for the header container */
+    margin-top: 100px; /* Adjust the margin-top as needed to control the spacing between the logo and header */
+}
+
+/* Style the header */
+header {
+    background-color: #007bff;
+    color: #fefbfb;
+    text-align: center;
+    padding: 20px 0;
+    position: relative; /* Relative positioning for the header */
+}
+
+header h1 {
+    font-size: 24px;
+}
+
+/* Style the navigation bar */
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
 }
 
 .product-item {
@@ -205,7 +246,76 @@ nav li {
     margin-right: 10px;
 }
 
+.flash {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    background-color: #f4f4f4;
+    color: #333;
+}
+.flash.success {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+.flash.danger {
+    background-color: #f2dede;
+    color: #a94442;
+}
 
+/* Additions for dashboard styles */
+.dashboard-header {
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
 
+.dashboard-header h1 {
+    font-size: 28px;
+}
 
+.dashboard-nav {
+    background-color: #333; /* Dark background for navigation */
+}
+
+.dashboard-nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex; /* Display navigation items horizontally */
+    justify-content: center; /* Center align navigation items */
+}
+
+.dashboard-nav ul li {
+    margin-right: 20px;
+}
+
+.dashboard-nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s; /* Add smooth color transition effect */
+}
+
+.dashboard-nav ul li a:hover {
+    color: #007bff; /* Change color on hover */
+}
+
+.dashboard-content {
+    padding: 20px;
+    text-align: center;
+    background-color: #fff; /* White background for content area */
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+.dashboard-footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
 
