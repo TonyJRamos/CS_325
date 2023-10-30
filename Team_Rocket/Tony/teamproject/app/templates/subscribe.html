@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subscribe</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Choose Your Subscription</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- List all available subscriptions for customers to choose from -->
+        <section id="available-subscriptions">
+            <h2>Subscribe Today With Your Favorite Subscription Plan</h2>
+            <ul>
+                {% for sub in subscriptions %}
+                    <li>
+                        <!-- Add the appropriate image based on the plan name -->
+                        {% if sub.planName == "Red Plan" %}
+                            <img src="/static/images/Red_Trans.png" alt="Red Plan Image" style="width: 75px; height: 75px; float: right;">
+                        {% elif sub.planName == "Blue Plan" %}
+                            <img src="/static/images/Blue_Trans.png" alt="Blue Plan Image" style="width: 75px; height: 75px; float: right;">
+                        {% elif sub.planName == "Purple Plan" %}
+                            <img src="/static/images/Purple_Trans.png" alt="Purple Plan Image" style="width: 75px; height: 75px; float: right;">
+                        {% elif sub.planName == "Gold Plan" %}
+                            <img src="/static/images/Gold_Trans.png" alt="Gold Plan Image" style="width: 75px; height: 75px; float: right;">
+                        {% endif %}
+                        {{ sub.planName }},
+                        Duration: {{ sub.duration }} months,
+                        Price: ${{ sub.price }}
+                        <!-- Add a form for customers to choose this subscription -->
+                        <form action="{{ url_for('subscribe_process') }}" method="post">
+                            <input type="hidden" name="templateID" value="{{ sub.templateID }}">
+                            <button type="submit">Subscribe</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2023 Online Order System
+    </footer>
+</body>
+</html>
+
+
+

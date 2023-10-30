@@ -1,5 +1,6 @@
 from app import db
 from flask_login import UserMixin
+from datetime import datetime
 
 class User(db.Model, UserMixin):  # Inherit from UserMixin
     __tablename__ = 'User'
@@ -24,6 +25,7 @@ class Customer(db.Model):
     city = db.Column(db.String(255))
     state = db.Column(db.String(255))
     address = db.Column(db.String(255))
+    zipCode = db.Column(db.String(10), default=None)
     email = db.Column(db.String(255), unique=True, nullable=True)
     addresses = db.relationship('Address', backref='customer_ref', lazy=True)
     orders = db.relationship('Orders', backref='customer_ref', lazy=True)
@@ -61,7 +63,7 @@ class Orders(db.Model):
     customerID = db.Column(db.Integer, db.ForeignKey('Customer.customerID'), nullable=False)
     total = db.Column(db.Numeric(10,2))
     tax = db.Column(db.Numeric(10,2))
-    orderStatus = db.Column(db.Enum('PENDING', 'SHIPPED', 'INVOICED', 'RETURNED'))
+    orderStatus = db.Column(db.Enum('PENDING', 'SHIPPED', 'INVOICED', 'RETURNED', 'SUBSCRIBED'))
     line_items = db.relationship('LineItems', backref='orders_ref', lazy=True)
 
 class LineItems(db.Model):
@@ -84,14 +86,21 @@ class SubscriptionTemplate(db.Model):
     __tablename__ = 'SubscriptionTemplate'
 
     templateID = db.Column(db.Integer, primary_key=True)
+    planName = db.Column(db.String(255), nullable=False)
     SKU = db.Column(db.Integer, db.ForeignKey('Catalog.SKU'), nullable=False)
     frequencyInMonths = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Numeric(10,2), nullable=False)  # Add the price column
+    duration = db.Column(db.Integer, nullable=False)     # Add the duration column if needed
     subscription_orders = db.relationship('SubscriptionOrders', backref='subscription_template_ref', lazy=True)
 
 class SubscriptionOrders(db.Model):
     __tablename__ = 'SubscriptionOrders'
 
     subscriptionOrderID = db.Column(db.Integer, primary_key=True)
-    templateID = db.Column(db.Integer, db.ForeignKey('SubscriptionTemplate.templateID'), nullable=False)
-    orderID = db.Column(db.Integer, db.ForeignKey('Orders.orderID'), nullable=False)
+    templateID = db.Column(db.Integer, db.ForeignKey('SubscriptionTemplate.templateID'))
+    orderID = db.Column(db.Integer, db.ForeignKey('Orders.orderID'))
 
+    status = db.Column(db.String(100), default="Active")
+    start_time = db.Column(db.DateTime, default=datetime.utcnow)
+    end_time = db.Column(db.DateTime)
+    planName = db.Column(db.String(255))

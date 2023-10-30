@@ -17,17 +17,37 @@
     </nav>
 
     <main>
-        <!-- Subscription management form goes here -->
+        <!-- Subscription management form -->
         <form id="subscription-form" action="/subscriptions" method="POST">
-            <!-- Form fields for subscription management -->
             <label for="sku">Product SKU:</label>
             <input type="text" id="sku" name="sku" required>
-
+            
             <label for="frequency">Frequency (months):</label>
             <input type="number" id="frequency" name="frequency" required>
+            
+            <label for="duration">Duration (months):</label>
+            <input type="number" id="duration" name="duration" required>
+            
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" step="0.01" required>
 
             <button type="submit">Create Subscription</button>
         </form>
+
+        <!-- List all available subscriptions -->
+        <section id="available-subscriptions">
+            <h2>Available Subscriptions</h2>
+            <ul>
+                {% for sub in subscriptions %}
+                    <li>
+                        Duration: {{ sub.duration }} months, 
+                        Frequency: {{ sub.frequencyInMonths }} months, 
+                        Price: ${{ sub.price }}
+                        <!-- You can add more details or buttons/links here as required -->
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
     </main>
 
     <footer>
@@ -38,4 +58,5 @@
     <script src="{{ url_for('static', filename='subscription.js') }}"></script>
 </body>
 </html>
+
 

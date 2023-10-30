@@ -1,10 +1,11 @@
-from flask import jsonify, request, render_template, flash, redirect, url_for, session
+from flask import jsonify, request, render_template, flash, redirect, url_for, session, current_app
 from flask_login import login_user, logout_user, login_required, UserMixin, current_user
 from app import app, db
-from app.models import User, Catalog, Orders, LineItems, SubscriptionTemplate
+from app.models import User, Catalog, Orders, LineItems, SubscriptionTemplate, SubscriptionOrders
 from app.forms import RegistrationForm
 from .models import Address, Orders, Customer, LineItems, Catalog
 from decimal import Decimal
+from datetime import datetime, timedelta
 import json
 
 # Import the required function for password hashing
@@ -91,9 +92,10 @@ def after_registration(user_id):
         city = request.form['city']
         state = request.form['state']
         address = request.form['address']
+        zipCode = request.form['zipCode']
         email = request.form['email']
 
-        new_customer = Customer(userID=user.userID, name=name, creditCard=creditCard, city=city, state=state, address=address, email=email)
+        new_customer = Customer(userID=user.userID, name=name, creditCard=creditCard, city=city, state=state, address=address, zipCode=zipCode, email=email)
         db.session.add(new_customer)
         try:
             db.session.commit()
@@ -296,6 +298,12 @@ def submit_order():
     try:
         products = Catalog.query.filter(Catalog.SKU.in_(selected_products)).all()
 
+        # Fetch the Customer object corresponding to the current_user's userID
+        customer = Customer.query.filter_by(userID=current_user.id).first()
+        if not customer:
+            # Handle the case where the customer is not found
+            return jsonify({"message": "Customer not found"}), 400
+
         # Decrement the available quantities
         for product in products:
             product.availableQuantity -= quantities[product.SKU]
@@ -306,7 +314,8 @@ def submit_order():
         total = sum([product.price * quantities[product.SKU] for product in products])
         tax = total * Decimal('0.1')  # Convert float to Decimal for the calculation
 
-        order = Orders(customerID=current_user.id, total=total, tax=tax, orderStatus='PENDING')
+        # Use customer.customerID when creating the order
+        order = Orders(customerID=customer.customerID, total=total, tax=tax, orderStatus='PENDING')
         db.session.add(order)
         db.session.flush() 
 
@@ -315,8 +324,9 @@ def submit_order():
             line_item = LineItems(orderID=order.orderID, SKU=product.SKU, quantity=quantities[product.SKU])
             db.session.add(line_item)
 
+        # Use customer.customerID when creating the address
         shipping_address = Address(
-            customerID=current_user.id,
+            customerID=customer.customerID,   # This is the key change
             addressType='Shipping',
             addressLine1=addressLine1,
             addressLine2=addressLine2,
@@ -338,16 +348,151 @@ def submit_order():
 @app.route('/subscriptions', methods=['GET', 'POST'], endpoint='subscription')
 def manage_subscriptions():
     if request.method == 'GET':
-        # Fetch and return subscriptions
+        # Fetch all subscription templates
         subscriptions = SubscriptionTemplate.query.all()
-        return jsonify([sub.SKU for sub in subscriptions])
+
+        # Convert each subscription to a dictionary of its attributes
+        subscriptions_data = [{
+            'templateID': sub.templateID,
+            'SKU': sub.SKU,
+            'frequencyInMonths': sub.frequencyInMonths,
+            'duration': sub.frequencyInMonths,
+            'price': str(sub.price)  # Convert to string for JSON serialization
+        } for sub in subscriptions]
+
+        # Render the template and pass the subscriptions to it
+        return render_template('subscription.html', subscriptions=subscriptions_data)
+
     elif request.method == 'POST':
         data = request.get_json()
-        sub = SubscriptionTemplate(SKU=data['sku'], frequencyInMonths=data['frequency'])
+
+        # Create a new SubscriptionTemplate object with data from the request
+        sub = SubscriptionTemplate(
+            SKU=data['sku'],
+            frequencyInMonths=data['frequencyInMonths'],
+            duration=data['duration'],
+            price=data['price']
+        )
+
         db.session.add(sub)
         db.session.commit()
 
         return jsonify({"message": "Subscription created successfully"})
+
+@app.route('/subscribe', methods=['GET', 'POST'], endpoint='subscribe')
+def subscribe():
+    if request.method == 'GET':
+        # Fetch all subscription templates
+        subscriptions = SubscriptionTemplate.query.all()
+
+        # Convert each subscription to a dictionary of its attributes
+        subscriptions_data = [{
+            'templateID': sub.templateID,
+            'SKU': sub.SKU,
+            'frequencyInMonths': sub.frequencyInMonths,
+            'duration': sub.frequencyInMonths,
+            'price': str(sub.price),
+            'planName': sub.planName
+        } for sub in subscriptions]
+
+        # Render a new template for customers
+        return render_template('subscribe.html', subscriptions=subscriptions_data)
+    
+    elif request.method == 'POST':
+        # Receive the chosen subscription's templateID from the form
+        chosen_template_id = request.form.get('templateID')
+
+        # Find the corresponding subscription template
+        chosen_subscription = SubscriptionTemplate.query.get(chosen_template_id)
+
+        if not chosen_subscription:
+            return jsonify({"error": "Subscription not found"}), 404
+
+        # Link the subscription to the user
+        # Here, I'm assuming you might have a model/table to link users with their subscriptions.
+        # If not, you'll need to design this based on your requirements.
+        user_subscription = UserSubscription(userID=current_user.id, templateID=chosen_template_id)
+        db.session.add(user_subscription)
+
+        # Process payment
+        # TODO: Integrate with your payment gateway, handle the transaction.
+
+        # Send a confirmation
+        # TODO: Maybe send a confirmation email or show a message to the user.
+
+        db.session.commit()
+
+        return jsonify({"message": "Subscription successful!"}), 200
+
+def add_months_to_date(start_date, months):
+    month = start_date.month - 1 + months
+    year = start_date.year + month // 12
+    month = month % 12 + 1
+    day = min(start_date.day, [31,
+        29 if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) else 28,
+        31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month-1])
+    return start_date.replace(year=year, month=month, day=day)
+
+@app.route('/subscribe_process', methods=['POST'])
+@login_required  # Ensure user is logged in
+def subscribe_process():
+    try:
+        current_app.logger.info('Starting subscription process...')
+
+        # Retrieve the templateID from the form data
+        template_id = request.form.get('templateID')
+        current_app.logger.info(f'Received templateID: {template_id}')
+
+        # Fetch the selected subscription template
+        selected_template = SubscriptionTemplate.query.get(template_id)
+        if not selected_template:
+            flash('Invalid subscription template selected.', 'error')
+            return redirect(url_for('subscribe'))
+
+        # Calculate end time based on the subscription duration
+        start_time = datetime.utcnow()
+        end_time = start_time + timedelta(days=30*selected_template.duration)
+
+        # Fetch the Customer object corresponding to the current_user's userID
+        customer = Customer.query.filter_by(userID=current_user.id).first()
+        if not customer:
+            # Handle the case where the customer is not found
+            flash('Customer not found.', 'error')
+            return redirect(url_for('subscribe'))
+
+        # Create an order for the subscription
+        tax_rate = Decimal('0.10')  # Convert the float to a Decimal
+        new_order = Orders(
+            customerID=customer.customerID,
+            total=selected_template.price,  # Assuming price is total before tax
+            tax=selected_template.price * tax_rate,  # Use the Decimal value for multiplication
+            orderStatus="SUBSCRIBED"  # Or any other default status
+        )
+
+        db.session.add(new_order)
+        db.session.flush()  # This will generate an orderID without committing the transaction
+
+        # Create a new subscription order with the associated orderID
+        new_subscription = SubscriptionOrders(
+            templateID=template_id,
+            orderID=new_order.orderID,  # Set the orderID here
+            start_time=start_time,
+            end_time=end_time,
+            planName=selected_template.planName
+        )
+
+        db.session.add(new_subscription)
+        db.session.commit()
+
+        current_app.logger.info('Subscription added to the database.')
+
+        flash('Subscription successful!', 'success')
+        return redirect(url_for('subscribe'))
+
+    except Exception as e:
+        current_app.logger.error(f'Error occurred: {e}')
+        flash('An error occurred while processing your subscription. Please try again.', 'error')
+        return redirect(url_for('subscribe'))
 
 @app.errorhandler(404)
 def not_found(e):
