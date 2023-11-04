@@ -7,7 +7,7 @@
 </head>
 <body>
     <header class="dashboard-header">
-        <h1>User Dashboard</h1>
+        <h1>Administrator Dashboard</h1>
     </header>
 
     <nav class="dashboard-nav">
@@ -18,8 +18,9 @@
             <!-- Display these options if the user is logged in -->
             <li><a href="{{ url_for('customer_profile') }}">Customer Profile</a></li>
             <li><a href="{{ url_for('get_catalog') }}">Catalog</a></li>
-            <li><a href="{{ url_for('create_order') }}">Place an Order</a></li>
+            <li><a href="{{ url_for('create_order') }}">Place an Order</a></li> 
             <li><a href="{{ url_for('subscribe') }}">Subscribe</a></li>
+            <li><a href="{{ url_for('subscription') }}">Manage Subscriptions</a></li>
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
             {% else %}
             <!-- Display login option if the user is not logged in -->

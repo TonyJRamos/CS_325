@@ -8,6 +8,7 @@ class User(db.Model, UserMixin):  # Inherit from UserMixin
     userID = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(10), default="standard")
     customers = db.relationship('Customer', backref='user', lazy=True)
 
     # Add an id attribute that returns the user's ID
@@ -65,6 +66,21 @@ class Orders(db.Model):
     tax = db.Column(db.Numeric(10,2))
     orderStatus = db.Column(db.Enum('PENDING', 'SHIPPED', 'INVOICED', 'RETURNED', 'SUBSCRIBED'))
     line_items = db.relationship('LineItems', backref='orders_ref', lazy=True)
+
+class OrderDetails(db.Model):
+    __tablename__ = 'OrderDetails'
+
+    orderDetailID = db.Column(db.Integer, primary_key=True)  # Renamed from lineItemID for clarity
+    orderID = db.Column(db.Integer, db.ForeignKey('Orders.orderID'), nullable=False)
+    SKU = db.Column(db.Integer, db.ForeignKey('Catalog.SKU'), nullable=False)
+    itemName = db.Column(db.String(255), nullable=False)
+    itemDescription = db.Column(db.Text)
+    quantity = db.Column(db.Integer, nullable=False)
+    priceAtTimeOfOrder = db.Column(db.Numeric(10,2), nullable=False)
+
+    # Relationships (if needed)
+    catalog_item = db.relationship('Catalog', backref=db.backref('order_details', lazy=True))
+    order = db.relationship('Orders', backref=db.backref('order_details', lazy=True))
 
 class LineItems(db.Model):
     __tablename__ = 'LineItems'

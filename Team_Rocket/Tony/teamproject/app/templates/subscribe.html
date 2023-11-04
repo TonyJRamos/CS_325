@@ -10,12 +10,30 @@
         <h1>Choose Your Subscription</h1>
     </header>
 
+    <!-- Display flash messages section -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <nav>
         <ul>
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
         </ul>
     </nav>
+
+    <!-- Added content about Rocket Members perks -->
+    <section id="rocket-members-perks">
+        <p>
+            By enrolling into a subscription plan, Rocket Members will gain access to game changing perks that will level up your Pokémon experience. These perks include weekly letters containing codes that access hidden parts of your Pokedex, receive weekly loot crates containing goodies such as Ultraballs, Potions, and even Rare Candy. And best of all, when a Legendary Pokémon is spotted, YOU will be the first to know where. So what are you waiting for! Sign up now and don't miss out!!
+        </p>
+    </section>
 
     <main>
         <!-- List all available subscriptions for customers to choose from -->
@@ -26,13 +44,13 @@
                     <li>
                         <!-- Add the appropriate image based on the plan name -->
                         {% if sub.planName == "Red Plan" %}
-                            <img src="/static/images/Red_Trans.png" alt="Red Plan Image" style="width: 75px; height: 75px; float: right;">
+                            <img src="{{ url_for('static', filename='images/Red_Trans.png') }}" alt="Red Plan Image" style="width: 75px; height: 75px; float: right;">
                         {% elif sub.planName == "Blue Plan" %}
-                            <img src="/static/images/Blue_Trans.png" alt="Blue Plan Image" style="width: 75px; height: 75px; float: right;">
+                            <img src="{{ url_for('static', filename='images/Blue_Trans.png') }}" alt="Blue Plan Image" style="width: 75px; height: 75px; float: right;">
                         {% elif sub.planName == "Purple Plan" %}
-                            <img src="/static/images/Purple_Trans.png" alt="Purple Plan Image" style="width: 75px; height: 75px; float: right;">
+                            <img src="{{ url_for('static', filename='images/Purple_Trans.png') }}" alt="Purple Plan Image" style="width: 75px; height: 75px; float: right;">
                         {% elif sub.planName == "Gold Plan" %}
-                            <img src="/static/images/Gold_Trans.png" alt="Gold Plan Image" style="width: 75px; height: 75px; float: right;">
+                            <img src="{{ url_for('static', filename='images/Gold_Trans.png') }}" alt="Gold Plan Image" style="width: 75px; height: 75px; float: right;">
                         {% endif %}
                         {{ sub.planName }},
                         Duration: {{ sub.duration }} months,
@@ -53,6 +71,8 @@
     </footer>
 </body>
 </html>
+
+
 
 
 

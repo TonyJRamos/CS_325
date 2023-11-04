@@ -350,3 +350,49 @@ form input[type="number"] {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+/* TeamRocket Logo For Dashboard */
+
+.teamrocket-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;  /* adjust margin as needed */
+}
+
+.teamrocket-logo {
+    max-width: 50%;  /* adjust this percentage to change the size of the logo */
+    height: auto;
+}
+
+/* Style for the Rocket Members perks section */
+#rocket-members-perks {
+    text-align: center;  /* Center align the text */
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive;  /* Use Comic Sans font */
+    /* font-weight: bold;  /* Make the text bold */
+    font-size: 1.2em;  /* Increase the font size a bit */
+    margin: 40px;  /* Add some margin for better spacing */
+    padding: 20px 0;  /* Add padding to the top and bottom for spacing around the borders */
+    border-top: 2px solid black;  /* Add a border to the top */
+    border-bottom: 2px solid black;  /* Add a border to the bottom */
+}
+
+/* Add styling for table lines */
+#ordersTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#ordersTable th, #ordersTable td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+#ordersTable th {
+    background-color: lightblue;
+}
+
+#ordersTable tbody tr:nth-child(even) {
+    background-color: lightgray;
+}

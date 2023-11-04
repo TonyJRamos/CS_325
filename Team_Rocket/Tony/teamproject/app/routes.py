@@ -3,13 +3,26 @@ from flask_login import login_user, logout_user, login_required, UserMixin, curr
 from app import app, db
 from app.models import User, Catalog, Orders, LineItems, SubscriptionTemplate, SubscriptionOrders
 from app.forms import RegistrationForm
-from .models import Address, Orders, Customer, LineItems, Catalog
+from .models import Address, Orders, Customer, LineItems, Catalog, OrderDetails
 from decimal import Decimal
 from datetime import datetime, timedelta
 import json
 
 # Import the required function for password hashing
 from werkzeug.security import check_password_hash, generate_password_hash
+
+# Add the requires_roles decorator here
+from functools import wraps
+
+def requires_roles(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if current_user.role not in roles:
+                return "Unauthorized", 403
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper
 
 # Define a simple function to fetch a user by username (you should replace this with your database query)
 def fetch_user_from_db(username):
@@ -111,51 +124,98 @@ def after_registration(user_id):
     return render_template('after_registration.html', user=user)
 
 @app.route('/dashboard')
-@login_required  # Use the login_required decorator to protect this route
+@login_required
 def dashboard():
-    return render_template('dashboard.html', user=current_user)  # Pass the 'user' variable to the template context
+    if current_user.role == "admin":
+        return render_template('admin_dashboard.html', user=current_user)
+    else:
+        return render_template('dashboard.html', user=current_user)
 
 @app.route('/profile', methods=['GET', 'POST'])
+@login_required  # Ensure that the user is logged in
 def customer_profile():
-    # Get the logged-in user's ID from the session
-    user_id = session.get('user_id')
-    if not user_id:
-        flash('You need to log in first.', 'error')
-        return redirect(url_for('login'))
+    # Get the logged-in user's ID directly from Flask-Login's current_user
+    user_id = current_user.userID
 
     user = User.query.get_or_404(user_id)
-    customer = user.customers.first()  # Assuming one-to-one relationship between User and Customer
+    customer = user.customers[0] if user.customers else None
 
     if request.method == 'POST':
         # Collect data from the form fields
         name = request.form['name']
         creditCard = request.form['creditCard']
+        city = request.form['city']
+        state = request.form['state']
+        address = request.form['address']
+        zipCode = request.form['zipCode']
+        email = request.form['email']
 
         if not customer:
             # Create a new customer if none exists
-            new_customer = Customer(userID=user_id, name=name, creditCard=creditCard)
+            new_customer = Customer(
+                userID=user_id, 
+                name=name, 
+                creditCard=creditCard, 
+                city=city, 
+                state=state, 
+                address=address, 
+                zipCode=zipCode, 
+                email=email
+            )
             db.session.add(new_customer)
         else:
             # Update existing customer
             customer.name = name
             customer.creditCard = creditCard
+            customer.city = city
+            customer.state = state
+            customer.address = address
+            customer.zipCode = zipCode
+            customer.email = email
 
         db.session.commit()
         flash('Profile updated successfully.', 'success')
-        return redirect(url_for('index'))
+        return render_template('customer_profile.html', user=current_user, customer=customer)
 
-    return render_template('customer_profile.html', user=user, customer=customer)
+    return render_template('customer_profile.html', user=current_user, customer=customer)
 
 @app.route('/get_profile/<int:user_id>', methods=['GET'])
 def get_profile(user_id):
-    user = User.query.get(user_id)  # Assuming User is your model name
+    user = User.query.get(user_id)
     if not user:
         return jsonify(error="User not found"), 404
 
+    # Get related customer details
+    if user.customers:
+        customer = user.customers[0]
+    else:
+        return jsonify(error="Customer details not found for user"), 404
+
+    # Get customer's orders
+    orders_data = []
+    orders = Orders.query.filter_by(customerID=customer.customerID).all()
+
+    for order in orders:
+        order_details = OrderDetails.query.filter_by(orderID=order.orderID).all()
+        
+        for detail in order_details:
+            catalog_item = Catalog.query.get(detail.SKU)
+            order_detail = {
+                'orderID': detail.orderID,
+                'itemName': detail.itemName,
+                'itemDescription': detail.itemDescription,
+                'pricePaid': float(detail.priceAtTimeOfOrder) + float(order.tax),  # Assuming price and tax are both floats
+                'quantity': detail.quantity,
+                'image': catalog_item.imageUrl,
+                'orderStatus': order.orderStatus
+            }
+            orders_data.append(order_detail)
+
     profile_data = {
         'username': user.username,
-        'email': user.email,
-        # Add other fields as needed
+        'email': customer.email,
+        'address': customer.address,
+        'orders': orders_data
     }
     return jsonify(profile_data)
 
@@ -263,31 +323,25 @@ def get_order_details(order_id):
     if not order:
         return jsonify({"message": "Order not found"}), 404
 
-    # Assuming you've set up a backref in LineItems to Orders in your models
-    items = [item.SKU for item in order.items]
+    details = order.order_details
+    items = [{"SKU": detail.SKU, "quantity": detail.quantity, "priceAtTimeOfOrder": str(detail.priceAtTimeOfOrder)} for detail in details]
 
     return jsonify({"orderID": order.orderID, "items": items})
 
 @app.route('/submit_order', methods=['POST'])
 @login_required
 def submit_order():
-    # Debugging: Log the received data
     print("Received data:", json.dumps(request.json, indent=4))
 
     # Extract the SKUs of the selected products
     selected_products = request.json.get('selected_products', [])
 
-    # Ensure selected_products is always a list
     if isinstance(selected_products, str):
         selected_products = [selected_products]
 
-    # Convert the SKUs in selected_products to integers
     selected_products = [int(sku) for sku in selected_products]
-
-    # Extract the quantities for each selected product
     quantities = {sku: int(request.json.get('quantity-' + str(sku))) for sku in selected_products}
 
-    # Extract shipping address details
     addressLine1 = request.json['addressLine1']
     addressLine2 = request.json.get('addressLine2', '')
     city = request.json['city']
@@ -298,13 +352,10 @@ def submit_order():
     try:
         products = Catalog.query.filter(Catalog.SKU.in_(selected_products)).all()
 
-        # Fetch the Customer object corresponding to the current_user's userID
         customer = Customer.query.filter_by(userID=current_user.id).first()
         if not customer:
-            # Handle the case where the customer is not found
             return jsonify({"message": "Customer not found"}), 400
 
-        # Decrement the available quantities
         for product in products:
             product.availableQuantity -= quantities[product.SKU]
             if product.availableQuantity < 0:
@@ -312,21 +363,25 @@ def submit_order():
                 return jsonify({"message": "Insufficient stock for product " + product.itemName}), 400
 
         total = sum([product.price * quantities[product.SKU] for product in products])
-        tax = total * Decimal('0.1')  # Convert float to Decimal for the calculation
+        tax = total * Decimal('0.1')
 
-        # Use customer.customerID when creating the order
         order = Orders(customerID=customer.customerID, total=total, tax=tax, orderStatus='PENDING')
         db.session.add(order)
         db.session.flush() 
 
-        # Save each selected product as a line item for this order
         for product in products:
-            line_item = LineItems(orderID=order.orderID, SKU=product.SKU, quantity=quantities[product.SKU])
-            db.session.add(line_item)
+            order_detail = OrderDetails(
+                orderID=order.orderID,
+                SKU=product.SKU,
+                itemName=product.itemName,  # Fetching product name
+                itemDescription=product.itemDescription,  # Fetching product description
+                quantity=quantities[product.SKU],
+                priceAtTimeOfOrder=product.price
+            )
+            db.session.add(order_detail)
 
-        # Use customer.customerID when creating the address
         shipping_address = Address(
-            customerID=customer.customerID,   # This is the key change
+            customerID=customer.customerID,
             addressType='Shipping',
             addressLine1=addressLine1,
             addressLine2=addressLine2,
@@ -344,6 +399,7 @@ def submit_order():
         return jsonify({"message": "Error creating the order"}), 500
 
     return jsonify({"message": "Order created successfully", "order_id": order.orderID})
+
 
 @app.route('/subscriptions', methods=['GET', 'POST'], endpoint='subscription')
 def manage_subscriptions():
