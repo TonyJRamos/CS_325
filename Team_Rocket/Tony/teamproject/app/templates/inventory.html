@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Inventory Management</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- Add item form -->
+        <div class="add-item-form">
+            <h2>Add New Item</h2>
+            <form action="{{ url_for('inventory_management') }}" method="post">
+                <input type="hidden" name="action" value="add_item">
+                <p><label for="newItemName">Name:</label>
+                <input type="text" id="newItemName" name="newItemName" required></p>
+                <p><label for="newDescription">Description:</label>
+                <input type="text" id="newDescription" name="newDescription" required></p>
+                <p><label for="newPrice">Price:</label>
+                <input type="number" step="0.01" id="newPrice" name="newPrice" required></p>
+                <p><label for="newQuantity">Quantity:</label>
+                <input type="number" id="newQuantity" name="newQuantity" required></p>
+                <p><label for="newImageUrl">Image URL:</label>
+                <input type="text" id="newImageUrl" name="newImageUrl"></p>
+                <input type="submit" value="Add Item">
+            </form>
+        </div>
+        
+        <!-- List items form -->
+        {% for product in products %}
+        <div class="product-item">
+            <div class="product-info">
+                <form action="{{ url_for('inventory_management') }}" method="post">
+                    <!-- Display item name and description -->
+                    <h2>{{ product.itemName }}</h2>
+                    <p>{{ product.itemDescription }}</p>
+                    <input type="hidden" name="action" value="update_item">
+                    <input type="hidden" name="item_id" value="{{ product.SKU }}">
+                    <p>
+                        <label for="quantity_{{ product.SKU }}">Quantity:</label>
+                        <input type="number" id="quantity_{{ product.SKU }}" name="quantity" value="{{ product.availableQuantity }}">
+                    </p>
+                    <p>
+                        <label for="price_{{ product.SKU }}">Price:</label>
+                        <input type="text" id="price_{{ product.SKU }}" name="price" value="{{ '%.2f'|format(product.price) }}">
+                    </p>
+                    <p>
+                        <label for="image_url_{{ product.SKU }}">Image URL:</label>
+                        <input type="text" id="image_url_{{ product.SKU }}" name="image_url" value="{{ product.imageUrl or '' }}">
+                    </p>
+                    <input type="submit" value="Update">
+                </form>
+            </div>
+            <div class="product-image">
+                <img src="{{ product.imageUrl or 'default-image-url.jpg' }}" alt="{{ product.itemName }}">
+            </div>
+        </div>
+        {% endfor %}
+    </main>
+    <footer>
+        <p>Footer content here</p>
+    </footer>
+</body>
+</html>

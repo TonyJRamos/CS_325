@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from config import Config
+# from flask_wtf.csrf import CSRFProtect
 
 # Define the static folder path
 static_folder = os.path.join(os.getcwd(), 'static')
@@ -12,6 +13,8 @@ static_folder = os.path.join(os.getcwd(), 'static')
 app = Flask(__name__, static_url_path='/static', static_folder=static_folder)
 app.config.from_object(Config)
 app.secret_key = '123456789'
+
+# csrf = CSRFProtect(app)
 
 # Initialize SQLAlchemy and Migrate extensions
 db = SQLAlchemy(app)

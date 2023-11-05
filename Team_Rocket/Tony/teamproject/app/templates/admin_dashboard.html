@@ -21,6 +21,8 @@
             <li><a href="{{ url_for('create_order') }}">Place an Order</a></li> 
             <li><a href="{{ url_for('subscribe') }}">Subscribe</a></li>
             <li><a href="{{ url_for('subscription') }}">Manage Subscriptions</a></li>
+            <li><a href="{{ url_for('inventory_management') }}">Inventory Management</a></li>
+            <li><a href="{{ url_for('order_management') }}">Order Management</a></li>
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
             {% else %}
             <!-- Display login option if the user is not logged in -->

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Management</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Order Management</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Billing Address</th>
+                    <th>Shipping Address</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.orderID }}</td>
+                    <td>{{ order.name }}</td>
+                    <td>
+                        <div class="address-block">
+                            <span class="address-type">Billing:</span>
+                            {{ order.billingAddress }}<br>
+                            {{ order.billingCity }}, {{ order.billingState }} {{ order.billingZipCode }}<br>
+                            {{ order.email }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="address-block">
+                            <span class="address-type">Shipping:</span>
+                            {{ order.shippingLine1 }}<br>
+                            {% if order.shippingLine2 %}{{ order.shippingLine2 }}<br>{% endif %}
+                            {{ order.shippingCity }}, {{ order.shippingState }} {{ order.shippingZipCode }}<br>
+                            {{ order.shippingCountry }}
+                        </div>
+                    </td>
+                    <td>{{ '%.2f' | format(order.total) }}</td>
+                    <td>{{ order.orderStatus }}</td>
+                    <td>
+                        {% if order.orderStatus == 'PENDING' %}
+                        <form action="{{ url_for('update_order_status', order_id=order.orderID) }}" method="post">
+                            <input type="submit" value="Mark as Shipped">
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <p>Once an item is marked as shipped, it will be removed from the queue.</p>
+    </footer>
+</body>
+</html>

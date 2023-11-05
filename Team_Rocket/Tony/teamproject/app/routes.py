@@ -3,9 +3,10 @@ from flask_login import login_user, logout_user, login_required, UserMixin, curr
 from app import app, db
 from app.models import User, Catalog, Orders, LineItems, SubscriptionTemplate, SubscriptionOrders
 from app.forms import RegistrationForm
-from .models import Address, Orders, Customer, LineItems, Catalog, OrderDetails
+from .models import Address, Orders, Customer, LineItems, Catalog, OrderDetails, Shipment
 from decimal import Decimal
 from datetime import datetime, timedelta
+from sqlalchemy import func
 import json
 
 # Import the required function for password hashing
@@ -400,6 +401,57 @@ def submit_order():
 
     return jsonify({"message": "Order created successfully", "order_id": order.orderID})
 
+@app.route('/order_management')
+@login_required
+@requires_roles('admin')
+def order_management():
+    # Subquery to get the highest address ID for each customer which signifies the most recent address
+    most_recent_addresses_subquery = db.session.query(
+        Address.customerID,
+        func.max(Address.addressID).label('maxAddressID')
+    ).filter(Address.addressType == 'Shipping').group_by(Address.customerID).subquery('most_recent_shipping')
+
+    # Main query to get orders with customer details and the most recent shipping address
+    orders_with_addresses = db.session.query(
+        Orders.orderID, 
+        Customer.name, 
+        Customer.address.label('billingAddress'),  # Replace 'address' with the actual billing address field if different
+        Customer.city.label('billingCity'), 
+        Customer.state.label('billingState'), 
+        Customer.zipCode.label('billingZipCode'), 
+        Customer.email, 
+        Address.addressLine1.label('shippingLine1'), 
+        Address.addressLine2.label('shippingLine2'), 
+        Address.city.label('shippingCity'), 
+        Address.state.label('shippingState'), 
+        Address.zipCode.label('shippingZipCode'), 
+        Address.country.label('shippingCountry'), 
+        Orders.total, 
+        Orders.orderStatus
+    ).join(Customer, Orders.customerID == Customer.customerID) \
+    .join(most_recent_addresses_subquery, Customer.customerID == most_recent_addresses_subquery.c.customerID) \
+    .join(Address, Address.addressID == most_recent_addresses_subquery.c.maxAddressID) \
+    .filter(Orders.orderStatus == 'PENDING') \
+    .all()
+
+    return render_template('order_management.html', orders=orders_with_addresses)
+
+@app.route('/update_order_status/<int:order_id>', methods=['POST'])
+@login_required
+@requires_roles('admin')
+def update_order_status(order_id):
+    order = Orders.query.get_or_404(order_id)
+    if order.orderStatus == 'PENDING':  # Double-check the status
+        order.orderStatus = 'SHIPPED'  # Update status
+        # Create or update shipment entry if required
+        for line_item in order.line_items:
+            shipment = Shipment(status='SHIP', lineItemID=line_item.lineItemID)
+            db.session.add(shipment)
+        db.session.commit()
+        flash('Order status updated to SHIPPED and shipment record created.', 'success')
+    else:
+        flash('Order status is not PENDING. No changes made.', 'error')
+    return redirect(url_for('order_management'))
 
 @app.route('/subscriptions', methods=['GET', 'POST'], endpoint='subscription')
 def manage_subscriptions():
@@ -549,6 +601,48 @@ def subscribe_process():
         current_app.logger.error(f'Error occurred: {e}')
         flash('An error occurred while processing your subscription. Please try again.', 'error')
         return redirect(url_for('subscribe'))
+
+@app.route('/inventory', methods=['GET', 'POST'])
+@login_required
+@requires_roles('admin')
+def inventory_management():
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'add_item':
+            try:
+                new_item = Catalog(
+                    itemName=request.form['newItemName'],
+                    itemDescription=request.form.get('newDescription', ''),
+                    price=request.form['newPrice'],
+                    availableQuantity=request.form['newQuantity'],
+                    imageUrl=request.form.get('newImageUrl', '')
+                )
+                db.session.add(new_item)
+                db.session.commit()
+                flash('New item added successfully!', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error adding new item: {e}', 'error')
+        elif action == 'update_item':
+            item_id = request.form.get('item_id')
+            try:
+                item = Catalog.query.get(item_id)
+                if item:
+                    item.availableQuantity = int(request.form['quantity'])
+                    item.price = float(request.form['price'])
+                    item.imageUrl = request.form['image_url']
+                    db.session.commit()
+                    flash('Inventory updated successfully!', 'success')
+                else:
+                    flash('Item not found', 'error')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error updating inventory: {e}', 'error')
+        return redirect(url_for('inventory_management'))
+
+    products = Catalog.query.all()
+    return render_template('inventory.html', products=products)
+
 
 @app.errorhandler(404)
 def not_found(e):

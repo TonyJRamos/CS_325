@@ -368,7 +368,7 @@ form input[type="number"] {
 /* Style for the Rocket Members perks section */
 #rocket-members-perks {
     text-align: center;  /* Center align the text */
-    font-family: 'Comic Sans MS', 'Comic Sans', cursive;  /* Use Comic Sans font */
+    font-family: 'Comic Sans MS', 'Comic Sans';  /* Use Comic Sans font */
     /* font-weight: bold;  /* Make the text bold */
     font-size: 1.2em;  /* Increase the font size a bit */
     margin: 40px;  /* Add some margin for better spacing */
@@ -395,4 +395,44 @@ form input[type="number"] {
 
 #ordersTable tbody tr:nth-child(even) {
     background-color: lightgray;
+}
+
+/* Style for bold horizontal line */
+.bold-line {
+    border-top: 2px solid #333; /* Change the color and the thickness as needed */
+}
+
+/* Style for registration messages */
+.registration-message {
+    font-family: 'Comic Sans MS', 'Comic Sans'; /* Change the font-family as you prefer */
+    font-size: 18px; /* Adjust font size as needed */
+    margin-bottom: 5px; /* Optional: add some spacing at the bottom */
+}
+
+.centered-flex {
+    display: flex; /* Use Flexbox */
+    font-family: 'Comic Sans MS', 'Comic Sans'; /* Change the font-family as you prefer */
+    font-size: 18px; /* Adjust font size as needed */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 50px; /* Set a specific height for your container */
+}
+
+/* Address styles for clarity */
+.address-block {
+    margin-bottom: 15px; /* Adds space between multiple addresses */
+    padding: 10px;
+    background: #f9f9f9; /* A light background for each address block */
+    border: 1px solid #eaeaea; /* A subtle border for the block */
+    border-radius: 4px; /* Rounded corners for the block */
+}
+
+.address-block:last-child {
+    margin-bottom: 0; /* Removes the bottom margin for the last address block */
+}
+
+.address-type {
+    font-weight: bold; /* Makes the address type bold */
+    display: block; /* Puts the address type on its own line */
+    margin-bottom: 5px; /* Adds some space below the address type */
 }
