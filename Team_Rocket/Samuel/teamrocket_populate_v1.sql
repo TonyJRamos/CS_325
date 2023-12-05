@@ -57,14 +57,14 @@ INSERT INTO Catalog (SKU, itemName, itemDescription, price, availableQuantity, i
 INSERT INTO Orders (orderID, customerID, total, tax, orderStatus) VALUES
 (1, 1, 59.97, 5.99, 'PENDING'),
 (2, 2, 69.69, 6.69, 'SHIPPED'),
-(3, 3, 59.97, 5.99, 'SHIPPED'),
-(4, 1, 79.99, 7.99, 'PENDING'),
-(5, 1, 109.99, 10.99, 'SHIPPED),
-(6, 4, 69.69, 6.69, 'PENDING),
-(7, 5, 59.99, 5.99, 'SHIPPED),
-(8, 2, 199.99, 19.99, 'SHIPPED),
-(9, 3, 79.99, 7.99, 'PENDING),
-(10, 2, 10.99, 1.99, 'SHIPPED);
+(3, 3, 79.99, 7.99, 'INVOICED'),
+(4, 4, 89.99, 8.99, 'RETURNED'),
+(5, 5, 99.99, 9.99, 'SUBSCRIBED'),
+(6, 6, 109.99, 10.99, 'PENDING'),
+(7, 7, 119.99, 11.99, 'SHIPPED'),
+(8, 8, 129.99, 12.99, 'INVOICED'),
+(9, 9, 139.99, 13.99, 'RETURNED'),
+(10, 10, 149.99, 14.99, 'SUBSCRIBED');
 
 
 -- Populating OrderDetails table
@@ -125,14 +125,15 @@ INSERT INTO SubscriptionTemplate (templateID, planName, SKU, frequencyInMonths, 
 
 -- Populating SubscriptionOrders table
 INSERT INTO SubscriptionOrders (subscriptionOrderID, templateID, orderID, status, start_time, end_time, planName) VALUES
-(1, 1, 11, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
-(2, 1, 12, 'Active', CURRENT_TIMESTAMP, NULL, 'Premium Plan'),
-(3, 1, 13, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
-(4 1, 14, 'Active', CURRENT_TIMESTAMP, NULL, 'Premium Plan'),
-(5, 1, 15, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
-(6, 1, 16, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
-(7, 1, 17, 'Active', CURRENT_TIMESTAMP, NULL, 'Premium Plan'),
-(8, 1, 18, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
-(9, 1, 19, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
-(10, 1, 20, 'Active', CURRENT_TIMESTAMP, NULL, 'Premium Plan');
+(1, 1, 1, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
+(2, 2, 2, 'Active', CURRENT_TIMESTAMP, NULL, 'Premium Plan'),
+(3, 3, 3, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
+(4, 4, 4, 'Active', CURRENT_TIMESTAMP, NULL, 'Premium Plan'),
+(5, 5, 5, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
+(6, 6, 6, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
+(7, 7, 7, 'Active', CURRENT_TIMESTAMP, NULL, 'Premium Plan'),
+(8, 8, 8, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
+(9, 9, 9, 'Active', CURRENT_TIMESTAMP, NULL, 'Basic Plan'),
+(10, 10, 10, 'Active', CURRENT_TIMESTAMP, NULL, 'Premium Plan');
+
 
