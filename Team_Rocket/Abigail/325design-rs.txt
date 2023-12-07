@@ -1,0 +1,37 @@
+Team Rocket
+
+Abigail Penland, Cheyenne Ty, Tony White-Ramos, Tommy Le, 
+Samuel Hodgdon, Daegan Hammond, and Jonathan Thang
+
+CS 325 - Fall 2023S
+
+Last modified: 11/17/2023
+
+User(USERID, username, password, role)
+	UNIQUE: username
+
+Customer(CUSTOMERID, userID, name, creditCard, city, state, zipCode, email)
+	FOREIGN KEY: (userID) REFERENCES User,
+	UNIQUE: email
+
+Address(ADDRESSID, CUSTOMERID, addressType, addressLine1, addressLine2, city, state, zipCode, country)
+	FOREIGN KEY: (customerID) REFERENCES Customer
+
+Catalog(SKU, itemName, itemDescription, price, availableQuantity, imageUrl)
+
+Orders(ORDERID, customerID, total, tax, orderStatus, subscriptionType)
+	FOREIGN KEY: (customerID) REFERENCES Customer
+
+OrderDetails(ORDERDETAILID, orderID, sku, itemName, itemDescription, quantity, priceAtTimeOfOrder)
+	FOREIGN KEY: (orderID) REFERENCES Orders,
+	FOREIGN KEY: (sku) REFERENCES Catalog
+
+Shipment(SHIPMENTID, ORDERDETAILSID, status)
+	FOREIGN KEY: (orderDetailsID) REFERENCES OrderDetails
+
+SubscriptionTemplate(TEMPLATEID, planName, SKU, frequencyInMonths, price, duration)
+	FOREIGN KEY: (SKU) REFERENCES Catalog
+
+SubscriptionOrders(ORDERID, subscriptionOrderID, templateID, status, start_time, end_time, planName)
+	FOREIGN KEY: (templateID) REFERENCES SubscriptionTemplate,
+	FOREIGN KEY: (orderID) REFERENCES Orders
