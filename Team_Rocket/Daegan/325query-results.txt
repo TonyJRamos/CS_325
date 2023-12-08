@@ -1,0 +1,234 @@
++-------------------+
+| Header            |
++-------------------+
+| Lab 16 Selections |
++-------------------+
+1 row in set (0.00 sec)
+
++-----------------------------------------------------------------+
+| Authors                                                         |
++-----------------------------------------------------------------+
+| Authors: Tony, Cheyenne, Abigail, Tommy, Daegan, Sam, Johnathan |
++-----------------------------------------------------------------+
+1 row in set (0.00 sec)
+
++-------------------------------------------------------+
+| Description                                           |
++-------------------------------------------------------+
+| Selection 1: List of all customers with their orders. |
++-------------------------------------------------------+
+1 row in set (0.00 sec)
+
++-------------------+---------+
+| name              | orderID |
++-------------------+---------+
+| John Doe          |       1 |
+| Jane Smith        |       2 |
+| Sam Hodgdon       |       3 |
+| Peter Griffen     |       4 |
+| Lightning McQueen |       5 |
+| Bob Johnson       |       6 |
+| Katie Brown       |       7 |
+| Margret Blue      |       8 |
+| Brian Griffen     |       9 |
+| Professor Oak     |      10 |
++-------------------+---------+
+10 rows in set (0.00 sec)
+
++----------------------------------------------------+
+| Description                                        |
++----------------------------------------------------+
+| Selection 2: Total number of items for each order. |
++----------------------------------------------------+
+1 row in set (0.00 sec)
+
++---------+------------+
+| orderID | TotalItems |
++---------+------------+
+|       1 |          1 |
+|       2 |          2 |
+|       3 |          1 |
+|       4 |          1 |
+|       5 |          2 |
+|       6 |          1 |
+|       7 |          1 |
+|       8 |          2 |
+|       9 |          1 |
+|      10 |          1 |
++---------+------------+
+10 rows in set (0.00 sec)
+
++-------------------------------------------------------+
+| Description                                           |
++-------------------------------------------------------+
+| Selection 3: SKU, item name, and total quantity sold. |
++-------------------------------------------------------+
+1 row in set (0.00 sec)
+
++------+----------+-----------+
+| SKU  | itemName | TotalSold |
++------+----------+-----------+
+| 1002 | Item 2   |         4 |
+| 1003 | Item 3   |         2 |
+| 1004 | Item 4   |         2 |
+| 1005 | Item 5   |         2 |
+| 1001 | Item 1   |         1 |
+| 1006 | Item 6   |         1 |
+| 1007 | Item 7   |         1 |
++------+----------+-----------+
+7 rows in set (0.00 sec)
+
++----------------------------------------------------+
+| Description                                        |
++----------------------------------------------------+
+| Selection 4: Users with orders totaling over $100. |
++----------------------------------------------------+
+1 row in set (0.01 sec)
+
++----------+
+| username |
++----------+
+| user10   |
+| user6    |
+| user7    |
+| user8    |
+| user9    |
++----------+
+5 rows in set (0.00 sec)
+
++-------------------------------------------------+
+| Description                                     |
++-------------------------------------------------+
+| Selection 5: Items not ordered by any customer. |
++-------------------------------------------------+
+1 row in set (0.00 sec)
+
++------+----------+
+| SKU  | itemName |
++------+----------+
+| 1008 | Item 8   |
+| 1009 | Item 9   |
+| 1010 | Item 10  |
++------+----------+
+3 rows in set (0.00 sec)
+
++----------------------------------------------------------------------+
+| Description                                                          |
++----------------------------------------------------------------------+
+| Selection 6: Customers who have made an order, sorted by customerID. |
++----------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
++-------------------+------------+
+| name              | customerID |
++-------------------+------------+
+| John Doe          |          1 |
+| Jane Smith        |          2 |
+| Sam Hodgdon       |          3 |
+| Peter Griffen     |          4 |
+| Lightning McQueen |          5 |
+| Bob Johnson       |          6 |
+| Katie Brown       |          7 |
+| Margret Blue      |          8 |
+| Brian Griffen     |          9 |
+| Professor Oak     |         10 |
++-------------------+------------+
+10 rows in set (0.00 sec)
+
++-------------------------------------------------+
+| Description                                     |
++-------------------------------------------------+
+| Selection 7: Customers with Shipping addresses. |
++-------------------------------------------------+
+1 row in set (0.00 sec)
+
++-------------------+-------------------+
+| name              | addressLine1      |
++-------------------+-------------------+
+| John Doe          | 123 1st Street    |
+| Jane Smith        | 456 2nd Avenue    |
+| Sam Hodgdon       | 777 Street Street |
+| Peter Griffen     | 123 Road Road     |
+| Lightning McQueen | 1 Car Avenue      |
+| Bob Johnson       | 3 House Way       |
+| Katie Brown       | 14 Cow Court      |
+| Margret Blue      | 123 Main Street   |
+| Brian Griffen     | 1212 Broadway     |
+| Professor Oak     | 7 Pokemon Way     |
++-------------------+-------------------+
+10 rows in set (0.00 sec)
+
++---------------------------------------------------+
+| Description                                       |
++---------------------------------------------------+
+| Selection 8: Orders with concatenated item names. |
++---------------------------------------------------+
+1 row in set (0.00 sec)
+
++---------+--------+
+| orderID | Items  |
++---------+--------+
+|       1 | Item 1 |
+|       2 | Item 2 |
+|       3 | Item 3 |
+|       4 | Item 4 |
+|       5 | Item 2 |
+|       6 | Item 3 |
+|       7 | Item 4 |
+|       8 | Item 5 |
+|       9 | Item 6 |
+|      10 | Item 7 |
++---------+--------+
+10 rows in set (0.00 sec)
+
++-------------------------------------------------+
+| Description                                     |
++-------------------------------------------------+
+| Selection 9: Customers with only standard role. |
++-------------------------------------------------+
+1 row in set (0.00 sec)
+
++-------------------+
+| name              |
++-------------------+
+| Jane Smith        |
+| Sam Hodgdon       |
+| Peter Griffen     |
+| Lightning McQueen |
+| Bob Johnson       |
+| Katie Brown       |
+| Margret Blue      |
+| Brian Griffen     |
+| Professor Oak     |
++-------------------+
+9 rows in set (0.00 sec)
+
++---------------------------------------------------------+
+| Description                                             |
++---------------------------------------------------------+
+| Selection 10: Modify view for frequently ordered items. |
++---------------------------------------------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
++----------------------------------------------------+
+| Description                                        |
++----------------------------------------------------+
+| Selection 11: Details of frequently ordered items. |
++----------------------------------------------------+
+1 row in set (0.00 sec)
+
++------+----------+------------------------+-------+--------------+
+| SKU  | itemName | itemDescription        | price | TimesOrdered |
++------+----------+------------------------+-------+--------------+
+| 1002 | Item 2   | Description for Item 2 | 59.97 |            2 |
+| 1003 | Item 3   | Description for Item 3 | 69.69 |            2 |
+| 1004 | Item 4   | Description for Item 4 | 79.99 |            2 |
+| 1001 | Item 1   | Description for Item 1 | 19.99 |            1 |
+| 1005 | Item 5   | Description for Item 5 | 89.99 |            1 |
+| 1006 | Item 6   | Description for Item 6 | 84.99 |            1 |
+| 1007 | Item 7   | Description for Item 7 | 15.99 |            1 |
++------+----------+------------------------+-------+--------------+
+7 rows in set (0.01 sec)
+

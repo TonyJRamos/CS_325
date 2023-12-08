@@ -1,0 +1,23 @@
++----------------------------------------------------------------------+
+| Description                                                          |
++----------------------------------------------------------------------+
+| Selection 6: Customers who have made an order, sorted by customerID. |
++----------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
++-------------------+------------+
+| name              | customerID |
++-------------------+------------+
+| John Doe          |          1 |
+| Jane Smith        |          2 |
+| Sam Hodgdon       |          3 |
+| Peter Griffen     |          4 |
+| Lightning McQueen |          5 |
+| Bob Johnson       |          6 |
+| Katie Brown       |          7 |
+| Margret Blue      |          8 |
+| Brian Griffen     |          9 |
+| Professor Oak     |         10 |
++-------------------+------------+
+10 rows in set (0.00 sec)
+
