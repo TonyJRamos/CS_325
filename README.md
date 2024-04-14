@@ -9,3 +9,5 @@ Market Pricer is our free-to-use website that will help you shop quickly and eff
   - Open the Market Pricer Folder
   - Find the SCENARIO.PDF file which will contain more information about the project
   - Once open, find the link that is listed as **Link to Webpage**
+OR
+  - Click this link [HERE](https://nrs-projects.humboldt.edu/~jt346/hackathon2024/mainpage.php).
